@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+ <head>
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <meta name='ocr-system' content='tesseract 5.3.4' />
+  <meta name='ocr-capabilities' content='ocr_page ocr_carea ocr_par ocr_line ocrx_word ocrp_wconf'/>
+ </head>
+ <body>
+  <div class='ocr_page' id='page_1' title='image "Downloads/test-9-soderganie-2.jpg"; bbox 0 0 1412 1265; ppageno 0; scan_res 300 300'>
+   <div class='ocr_carea' id='block_1_1' title="bbox 57 41 1375 1185">
+    <p class='ocr_par' id='par_1_1' lang='rus' title="bbox 57 0 1412 1185">
+     <span class='ocr_line' id='line_1_1' title="bbox 69 41 1311 170; baseline 0.029 -60; x_size 78; x_descenders 18; x_ascenders 25">
+      <span class='ocrx_word' id='word_1_1' title='bbox 69 41 556 148; x_wconf 0'>Кревиеиийни</span>
+      <span class='ocrx_word' id='word_1_2' title='bbox 582 90 659 120; x_wconf 0'>м</span>
+      <span class='ocrx_word' id='word_1_3' title='bbox 693 87 738 118; x_wconf 73'>2.</span>
+      <span class='ocrx_word' id='word_1_4' title='bbox 781 57 1311 170; x_wconf 0'>Пурим</span>
+     </span>
+     <span class='ocr_line' id='line_1_2' title="bbox 57 142 1325 270; baseline 0.017 -43; x_size 72.539734; x_descenders 16.539736; x_ascenders 19">
+      <span class='ocrx_word' id='word_1_5' title='bbox 57 142 604 270; x_wconf 1'>Регины</span>
+      <span class='ocrx_word' id='word_1_6' title='bbox 662 164 921 261; x_wconf 6'>Селье</span>
+      <span class='ocrx_word' id='word_1_7' title='bbox 953 164 1099 261; x_wconf 23'>иен</span>
+      <span class='ocrx_word' id='word_1_8' title='bbox 1147 164 1261 261; x_wconf 23'>йе</span>
+      <span class='ocrx_word' id='word_1_9' title='bbox 1268 164 1325 261; x_wconf 40'>—</span>
+     </span>
+     <span class='ocr_line' id='line_1_3' title="bbox 57 261 1327 387; baseline 0.023 -44; x_size 71; x_descenders 19; x_ascenders 12">
+      <span class='ocrx_word' id='word_1_10' title='bbox 57 261 295 377; x_wconf 0'>рее</span>
+      <span class='ocrx_word' id='word_1_11' title='bbox 304 261 392 377; x_wconf 0'>лрл</span>
+      <span class='ocrx_word' id='word_1_12' title='bbox 430 261 527 377; x_wconf 23'>Кой.</span>
+      <span class='ocrx_word' id='word_1_13' title='bbox 599 317 1002 387; x_wconf 0'>рииии</span>
+      <span class='ocrx_word' id='word_1_14' title='bbox 1053 321 1108 365; x_wconf 26'>Фо</span>
+      <span class='ocrx_word' id='word_1_15' title='bbox 1170 328 1327 363; x_wconf 19'>ее</span>
+      <span class='ocrx_word' id='word_1_16' title='bbox 1293 308 1329 391; x_wconf 54'>=</span>
+     </span>
+     <span class='ocr_line' id='line_1_4' title="bbox 60 626 1375 773; baseline 0.038 -76; x_size 78; x_descenders 22; x_ascenders 14">
+      <span class='ocrx_word' id='word_1_17' title='bbox 60 642 300 759; x_wconf 0'>прерыи</span>
+      <span class='ocrx_word' id='word_1_18' title='bbox 342 626 824 753; x_wconf 0'>еереи</span>
+      <span class='ocrx_word' id='word_1_19' title='bbox 845 681 1129 773; x_wconf 3'>а</span>
+      <span class='ocrx_word' id='word_1_20' title='bbox 1187 700 1375 734; x_wconf 14'>ых.</span>
+     </span>
+     <span class='ocr_line' id='line_1_5' title="bbox 58 853 1293 983; baseline 0.025 -41; x_size 65.751656; x_descenders 14.751656; x_ascenders 18">
+      <span class='ocrx_word' id='word_1_21' title='bbox 58 879 298 965; x_wconf 32'>ея</span>
+      <span class='ocrx_word' id='word_1_22' title='bbox 382 853 776 983; x_wconf 38'>ен)</span>
+      <span class='ocrx_word' id='word_1_23' title='bbox 1171 927 1293 961; x_wconf 59'>2227</span>
+     </span>
+     <span class='ocr_line' id='line_1_6' title="bbox 58 1121 278 1185; baseline 0.032 -5; x_size 79.221855; x_descenders 19.221855; x_ascenders 17">
+      <span class='ocrx_word' id='word_1_24' title='bbox 58 1121 278 1185; x_wconf 0'>дй`</span>
+     </span>
+    </p>
+   </div>
+   <div class='ocr_separator' id='block_1_2' title="bbox 1 2 67 1263"></div>
+   <div class='ocr_separator' id='block_1_3' title="bbox 1334 236 1381 1263"></div>
+   <div class='ocr_separator' id='block_1_4' title="bbox 1358 52 1380 600"></div>
+  </div>
+ </body>
+</html>

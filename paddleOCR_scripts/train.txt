@@ -1,0 +1,1 @@
+python tools\train.py -c ..\..\..\rec_cyrillic_lite_train.yml -o Global.pretrained_model=pretrain_models\cyrillic_ppocr_mobile_v2.0_rec_train\best_accuracy

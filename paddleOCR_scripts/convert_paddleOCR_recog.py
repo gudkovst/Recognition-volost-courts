@@ -10,7 +10,7 @@ def annotation(name: str, train: bool = True) -> str:
     return "train_data/rec/" + ds + name + '\t' + liter + '\n'
 
 
-def move_and_annotate(files: list):
+def move_and_annotate(*files):
     train_file, test_file = files
     for liter_storage in os.listdir(config.base_dir):
         liter_dir = os.path.join(config.base_dir, liter_storage)
@@ -27,7 +27,7 @@ def move_and_annotate(files: list):
             test_file.write(annotation(liter, False))
 
 
-def annotate(files: list):
+def annotate(*files):
     def __annotate(file, dirc):
         liters = os.listdir(dirc)
         shuffle(liters)
@@ -45,6 +45,6 @@ def annotate(files: list):
 if __name__ == "__main__":
     train_file = open(config.train_file_name, 'w', encoding="utf-8")
     test_file  = open(config.test_file_name, 'w', encoding="utf-8")
-    annotate([train_file, test_file])
+    annotate(train_file, test_file)
     train_file.close()
     test_file.close()

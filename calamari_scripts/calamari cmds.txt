@@ -1,0 +1,4 @@
+calamari-train --train.images data\all\train\*.png --val.images data\all\test\*.png --trainer.output_dir model\all_data_v2 --trainer.epochs 500 --n_augmentations 2 --early_stopping.n_to_go 25
+
+
+calamari-predict --checkpoint model\all_data_v2\best.ckpt --data.images data\all\test\*.png --output_dir data\all\predict0_v2

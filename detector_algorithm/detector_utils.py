@@ -17,7 +17,7 @@ def fill_fields(image_ref):
             if p == 0:
                 image_ref[index][j] = WHITE_VALUE
                 i = index + direction
-                while image_ref[i][j] == 0:
+                while 0 <= i < image_ref.shape[0] and image_ref[i][j] == 0:
                     image_ref[i][j] = WHITE_VALUE
                     i += direction
                     
@@ -25,64 +25,85 @@ def fill_fields(image_ref):
     __round__(image_ref.shape[0] - 1, -1)
 
 
-def repaint_columns(image_ref, coef=0.99, threshold=25, paint=False, verbose=False):
-    deleted = []
-    counter, white_col_begin, white_col_end = 0, -1, 0
-    for col in range(image_ref.shape[1]):
-        count_white = sum([st[col] for st in image_ref]) / WHITE_VALUE
-        if count_white > image_ref.shape[0] * coef:
-            counter += 1
-            if white_col_end != col - 1:
-                white_col_begin = col
-            white_col_end = col
-            if verbose:
-                print('col: ', col, count_white)
-            if paint:
-                for i in range(image_ref.shape[0]):
-                    image_ref[i][col] = GRAY_VALUE
+def merge_deleted(deleted, threshold):
+    merged_deleted = []
+    merged_begin = None
+    for d1, d2 in zip(deleted[:-1], deleted[1:]):
+        if d2[0] - d1[1] > threshold:
+            if merged_begin is None:
+                merged_deleted.append(d1)
+            else:
+                merged_deleted.append((merged_begin, d1[1]))
+                merged_begin = None
         else:
-            if counter > threshold:
-                deleted.append((white_col_begin, white_col_end))
-            counter = 0
-    if counter > threshold:
-        deleted.append((white_col_begin, white_col_end))
-    return deleted
+            if merged_begin is None:
+                merged_begin = d1[0]
+    if merged_begin is not None:
+        merged_deleted.append((merged_begin, deleted[-1][1]))
+    return merged_deleted
 
 
-def repaint_strings(image_ref, coef=0.8, threshold=25, paint=False, verbose=False):
-    deleted = []
-    counter, white_str_begin, white_str_end = 0, -1, 0
-    for i, st in enumerate(image_ref):
-        count_white = sum(st) / WHITE_VALUE
-        if count_white > image_ref.shape[1] * coef:
+def repaint(image_ref, direction, coef=0.8, threshold=25, merge_threshold=25, paint=False, verbose=False): # direction = 0 if str = 1 if col
+    def __paint__():
+        if direction:
+            for i in range(image_ref.shape[0]):
+                    image_ref[i][num_line] = GRAY_VALUE
+        else:
+            for j in range(image_ref.shape[1]):
+                    image_ref[num_line][j] = GRAY_VALUE
+                
+    
+    deleted = [(0, 0)]
+    counter, white_begin, white_end = 0, -1, 0
+    for num_line in range(image_ref.shape[direction]):
+        line = [st[num_line] for st in image_ref] if direction else image_ref[num_line]
+        count_white = sum(line) / WHITE_VALUE
+        if count_white > image_ref.shape[1 - direction] * coef:
             counter += 1
-            if white_str_end != i - 1:
-                white_str_begin = i
-            white_str_end = i
+            if white_end != num_line - 1:
+                white_begin = num_line
+            white_end = num_line
             if verbose:
-                print('str: ', i, count_white)
+                title = 'col: ' if direction else 'str: '
+                print(title, num_line, count_white)
             if paint:
-                for j in range(image_ref.shape[1]):
-                    image_ref[i][j] = GRAY_VALUE
+                __paint__()
         else:
             if counter > threshold:
-                deleted.append((white_str_begin, white_str_end))
+                deleted.append((white_begin, white_end))
             counter = 0
     if counter > threshold:
-        deleted.append((white_str_begin, white_str_end))
-    return deleted
+        deleted.append((white_begin, white_end))
+    deleted.append((image_ref.shape[direction], image_ref.shape[direction]))
+    return merge_deleted(deleted, merge_threshold)
+
+
+def repaint_columns(image_ref, coef=0.99, threshold=25, merge_threshold=25, paint=False, verbose=False):
+    return repaint(image_ref, 1, coef, threshold, merge_threshold, paint, verbose)
+
+
+def repaint_strings(image_ref, coef=0.8, threshold=25, merge_threshold=25, paint=False, verbose=False):
+    return repaint(image_ref, 0, coef, threshold, merge_threshold, paint, verbose)
 
 
 def cut_strings(img, deleted):
     imgs = []
-    d = [(0, 0)] + deleted + [img.shape]
+    d = deleted + []
+    if d[0][0] != 0:
+        d = [(0, 0)] + d
+    if d[-1][1] != img.shape[0]:
+        d += [img.shape]
     for i in range(len(d) - 1):
         imgs.append(img[d[i][1]:d[i+1][0]])
     return imgs
 
 
 def cut_columns(img, deleted):
-    d = [(0, 0)] + deleted + [img.shape]
+    d = deleted + []
+    if d[0][0] != 0:
+        d = [(0, 0)] + d
+    if d[-1][1] != img.shape[1]:
+        d += [(img.shape[1], img.shape[1])]
     imgs = [[] for i in d[1:]]
     for st in img:
         for i in range(len(d) - 1):

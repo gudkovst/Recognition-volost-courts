@@ -25,6 +25,12 @@ def fill_fields(image_ref):
     __round__(image_ref.shape[0] - 1, -1)
 
 
+def get_column(img, num):
+    if not 0 <= num < img.shape[1]:
+        raise IndexError('Number of column is invalid')
+    return [st[num] for st in img]
+    
+
 def merge_deleted(deleted, threshold):
     merged_deleted = []
     merged_begin = None
@@ -56,7 +62,7 @@ def repaint(image_ref, direction, coef=0.8, threshold=25, merge_threshold=25, pa
     deleted = [(0, 0)]
     counter, white_begin, white_end = 0, -1, 0
     for num_line in range(image_ref.shape[direction]):
-        line = [st[num_line] for st in image_ref] if direction else image_ref[num_line]
+        line = get_column(image_ref, num_line) if direction else image_ref[num_line]
         count_white = sum(line) / WHITE_VALUE
         if count_white > image_ref.shape[1 - direction] * coef:
             counter += 1
@@ -109,6 +115,15 @@ def cut_columns(img, deleted):
         for i in range(len(d) - 1):
             imgs[i].append(st[d[i][1]:d[i+1][0]])
     return [np.array(im) for im in imgs]
+
+
+def graphic_columns_whites(img):
+    whites = []
+    cols = range(img.shape[1])
+    for col in cols:
+        whites.append(sum(get_column(img, col)) / WHITE_VALUE)
+    plt.plot(cols, whites, 'b')
+    return list(zip(cols, whites))
 
 
 def get_binary_image(image_path, threshold=127):

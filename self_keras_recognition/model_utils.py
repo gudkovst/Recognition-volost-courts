@@ -1,4 +1,3 @@
-from keras import layers, models
 from keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
@@ -20,15 +19,11 @@ class UniqueLabelEncoder(LabelEncoder):
 ROOT = r'C:\Users\gudko\history_envs\data\ALL_LITERS\__почерк1'
 
 
-def build_model():
-    pass
-
-
-def prepare_data(size: int):
-    X, labels = load_distributed_images(ROOT, size)
+def prepare_data(size: int, interpolator=Image.BICUBIC, test_part=0.15):
+    X, labels = load_distributed_images(ROOT, size, interpolator)
     le = UniqueLabelEncoder()
     y = le.fit_transform(labels)
-    X_nn_train, X_nn_test, y_nn_train, y_nn_test = train_test_split(X, y, random_state=313, test_size=0.15)
+    X_nn_train, X_nn_test, y_nn_train, y_nn_test = train_test_split(X, y, random_state=313, test_size=test_part)
     X_nn_train = X_nn_train.reshape((X_nn_train.shape[0], size, size, 4))
     X_nn_test = X_nn_test.reshape((X_nn_test.shape[0], size, size, 4))
     y_nn_train = to_categorical(y_nn_train)
@@ -36,23 +31,36 @@ def prepare_data(size: int):
     return X_nn_train, X_nn_test, y_nn_train, y_nn_test
 
 
-def save_model(model, dir_save, name: str):
-    if not type(name) == str:
-        raise TypeError("name is not string: model don't save")
-    ext = '.keras'
-    name = name.split('.')[0] + ext
-    if len(name) <= len(ext):
-        raise TypeError("name is not defined: model don't save")
-    model.save(os.path.join(dir_save, name))
+def get_data_nearest(size: int, test_part=0.15):
+    return prepare_data(size, Image.NEAREST, test_part)
 
 
-def test_model(model, X, y):
-    prs = model.predict(X)
-    preds = [np.argmax(p) for p in prs]
-    y_test = [np.argmax(yi) for yi in y]
+def get_data_bilinear(size: int, test_part=0.15):
+    return prepare_data(size, Image.BILINEAR, test_part)
+
+
+def get_data_bicubic(size: int, test_part=0.15):
+    return prepare_data(size, Image.BICUBIC, test_part)
+
+
+def get_data_lanczos(size: int, test_part=0.15):
+    return prepare_data(size, Image.LANCZOS, test_part)
+
+
+def inverse_label(labels):
     le = UniqueLabelEncoder()
-    labels = le.inverse_transform(y_test)
-    predicts = le.inverse_transform(preds)
-    print_metrics(labels, predicts)
-    make_conf_matrix(labels, predicts, labels=np.unique(labels))
+    return le.inverse_transform([np.argmax(l) for l in labels])
 
+
+def print_metrics(trues, preds):
+    f1 = metrics.f1_score(trues, preds, average='macro')
+    precision = metrics.precision_score(trues, preds, average='macro')
+    recall = metrics.recall_score(trues, preds, average='macro')
+    print(f"precision: {precision}\nrecall: {recall}\nF1: {f1}")
+
+
+def make_conf_matrix(trues, preds, labels):
+    confusion_matrix = metrics.confusion_matrix(trues, preds, labels=sorted(labels))
+    cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix=confusion_matrix, display_labels=sorted(labels))
+    cm_display.plot()
+    plt.show()

@@ -64,3 +64,10 @@ def make_conf_matrix(trues, preds, labels):
     cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix=confusion_matrix, display_labels=sorted(labels))
     cm_display.plot()
     plt.show()
+
+
+def calc_metrics(y, prs):
+    labels = inverse_label(y)
+    predicts = inverse_label(prs)
+    print_metrics(labels, predicts)
+    make_conf_matrix(labels, predicts, labels=np.unique(labels))

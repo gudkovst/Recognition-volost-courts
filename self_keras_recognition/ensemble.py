@@ -1,3 +1,4 @@
+from ensemble_utils import RecognitionSample
 from glob import glob
 from os.path import join as ospj
 from recognition_model import *
@@ -6,16 +7,16 @@ from recognition_model import *
 methods = [get_data_nearest, get_data_bilinear, get_data_bicubic, get_data_lanczos]
 
 
-class Ensemble:
+class TestedEnsemble:
     
     def __init__(self, size):
         self.size = size
-        data = methods[0](size)
-        _, _, _, self.y_test = data
-        self.models = [TestedModel(data, 'nearest')]
-        for method in methods[1:]:
+        self.models = []
+        for method in methods:
             name = method.__name__.split('_')[-1]
-            self.models.append(TestedModel(method(size), name))
+            data = method(size)
+            self.models.append(TestedModel(data, name))
+        _, _, _, self.y_test = data
         self.predicts = None
 
     def learn(self, epochs=50):
@@ -42,20 +43,13 @@ class Ensemble:
             model.check_save(path, method.__name__.split('_')[-1])
 
 
-class LoadedEnsemble(Ensemble):
-
-    def __init__(self, path):
-        for name in glob(ospj(path, '*.keras')):
-            pass
-    
-
 class MetaEnsemble:
 
     def __init__(self, *sizes):
         _, _, _, self.y_test = methods[0](1)
         self.ensembles = []
         for size in sizes:
-            self.ensembles.append(Ensemble(size))
+            self.ensembles.append(TestedEnsemble(size))
         self.predicts = None
 
     def learn(self, epochs=50):
@@ -84,3 +78,30 @@ class FittedMetaEnsemble(MetaEnsemble):
 
     def learn(self, epochs):
         pass
+
+
+class LoadedEnsemble:
+
+    def __init__(self, config: dict[(int, int), str]):
+        self.models = {}
+        for key in config:
+            assert type(key) == tuple and len(key) == 2 and type(key[0]) == type(key[1]) == int
+            model = keras.saving.load_model(config[key])
+            self.models[key] = model
+
+    def get_data_config(self):
+        return seld.models.keys()
+        
+
+    def predict(self, data): # data: RecognitionSample
+        self.predicts = np.zeros(data.get_params(), dtype=float)
+        for key in self.models:
+            X = data.get_key_data(key)
+            self.predicts += model.predict(X)
+        return self.predicts
+
+    def recognize(self, path):
+        data_config = self.get_data_config()
+        sample = RecognitionSample(data_config)
+        sample.construct(path)
+        predicts = self.predict(sample) #TODO: write to file

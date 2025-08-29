@@ -22,6 +22,22 @@ def get_liter_dir(name: str) -> str:
     return liter.lower()
 
 
+def fill_fields(image_ref):
+    WHITE_VALUE = 255
+    
+    def __round__(index, direction):
+        for j, p in enumerate(image_ref[index]):
+            if sum(p) == 0:
+                image_ref[index][j] = WHITE_VALUE
+                i = index + direction
+                while 0 <= i < image_ref.shape[0] and sum(image_ref[i][j]) == 0:
+                    image_ref[i][j] = WHITE_VALUE
+                    i += direction
+                    
+    __round__(0, 1)
+    __round__(image_ref.shape[0] - 1, -1)
+
+
 def convert_image(image, size: int = 10, interpolator=Image.BICUBIC) -> np.array:
     b = image.getbbox()
     img = image.crop(b)

@@ -82,7 +82,8 @@ class FittedMetaEnsemble(MetaEnsemble):
 
 class LoadedEnsemble:
 
-    def __init__(self, config: dict[(int, int), str]):
+    def __init__(self, config: dict[(int, int), str], alphabet_len):
+        self.alphabet_len = alphabet_len
         self.models = {}
         for key in config:
             assert type(key) == tuple and len(key) == 2 and type(key[0]) == type(key[1]) == int
@@ -90,18 +91,20 @@ class LoadedEnsemble:
             self.models[key] = model
 
     def get_data_config(self):
-        return seld.models.keys()
+        return self.models.keys()
         
-
     def predict(self, data): # data: RecognitionSample
         self.predicts = np.zeros(data.get_params(), dtype=float)
+        print(self.predicts.shape)
         for key in self.models:
             X = data.get_key_data(key)
-            self.predicts += model.predict(X)
+            print(X.shape)
+            self.predicts += self.models[key].predict(X)
         return self.predicts
 
     def recognize(self, path):
         data_config = self.get_data_config()
-        sample = RecognitionSample(data_config)
+        sample = RecognitionSample(data_config, self.alphabet_len)
         sample.construct(path)
         predicts = self.predict(sample) #TODO: write to file
+        return inverse_label(predicts)

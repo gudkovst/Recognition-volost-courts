@@ -37,11 +37,11 @@ class RecognitionSample: # string for recognition: dict[(size, method): list[np.
             img = image_string[:, i:i+window, :]
             for size, method in self.data.keys():
                 img_crop = crop_window(img, size, method)
-                sample.put((size, method), img_crop)
-        self.count_frames = i + 1
+                self.put((size, method), img_crop)
+        self.count_frames = i // step + 1
 
-    def get_key_data(self, key) -> list[np.array]:
-        return self.data[key]
+    def get_key_data(self, key) -> np.array:
+        return np.array(self.data[key])
 
     def get_params(self):
         return (self.count_frames, self.alphabet_len)

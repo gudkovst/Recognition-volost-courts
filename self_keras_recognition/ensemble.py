@@ -4,11 +4,10 @@ from os.path import join as ospj
 from recognition_model import *
 
 
-methods = [get_data_nearest, get_data_bilinear, get_data_bicubic, get_data_lanczos]
-
-
 class TestedEnsemble:
-    
+
+    methods = [get_data_nearest, get_data_bilinear, get_data_bicubic, get_data_lanczos]
+
     def __init__(self, size):
         self.size = size
         self.models = []
@@ -82,29 +81,41 @@ class FittedMetaEnsemble(MetaEnsemble):
 
 class LoadedEnsemble:
 
-    def __init__(self, config: dict[(int, int), str], alphabet_len):
-        self.alphabet_len = alphabet_len
-        self.models = {}
-        for key in config:
-            assert type(key) == tuple and len(key) == 2 and type(key[0]) == type(key[1]) == int
-            model = keras.saving.load_model(config[key])
-            self.models[key] = model
+    def __init__(self, config: set[(int, str)], alphabet_file: str):
+        alphabet = np.load(alphabet_file)
+        UniqueLabelEncoder().classes_ = alphabet
+        self.alphabet_len = alphabet.shape[0]
+        self.models = list()
+        for rec in config:
+            assert type(rec) == tuple and len(rec) == 2
+            method, model_path = rec
+            assert type(method) == int and type(model_path) == str 
+            model = keras.saving.load_model(model_path)
+            assert model.output_shape[1] == self.alphabet_len
+            self.models.append((model.input_shape[1:], method, model))
 
     def get_data_config(self):
-        return self.models.keys()
+        return [rec[:2] for rec in self.models]
         
     def predict(self, data): # data: RecognitionSample
         self.predicts = np.zeros(data.get_params(), dtype=float)
-        print(self.predicts.shape)
-        for key in self.models:
+        for rec in self.models:
+            key = rec[:2]
             X = data.get_key_data(key)
-            print(X.shape)
-            self.predicts += self.models[key].predict(X)
+            model = rec[2]
+            self.predicts += model.predict(X)
         return self.predicts
+
+    def _decode_predict(self, predicts, whitespace_indexes):
+        prs = inverse_label(predicts)
+        for num, white_index in enumerate(whitespace_indexes):
+            prs = np.insert(prs, white_index + num, ' ')
+        return prs
 
     def recognize(self, path):
         data_config = self.get_data_config()
         sample = RecognitionSample(data_config, self.alphabet_len)
         sample.construct(path)
         predicts = self.predict(sample) #TODO: write to file
-        return inverse_label(predicts)
+        return self._decode_predict(predicts, sample.whitespace_index)
+        

@@ -19,32 +19,33 @@ class UniqueLabelEncoder(LabelEncoder):
 ROOT = r'C:\Users\gudko\history_envs\data\ALL_LITERS\__почерк1'
 
 
-def prepare_data(size: int, interpolator=Image.BICUBIC, test_part=0.15):
-    X, labels = load_distributed_images(ROOT, size, interpolator)
+def prepare_data(size: int, interpolator=Image.BICUBIC, test_part=0.15, mode='RGBA', **kwargs):
+    kwargs |= {'size': size, 'interpolator': interpolator, 'mode': mode}
+    X, labels = load_distributed_images(ROOT, **kwargs)
     le = UniqueLabelEncoder()
     y = le.fit_transform(labels)
     X_nn_train, X_nn_test, y_nn_train, y_nn_test = train_test_split(X, y, random_state=313, test_size=test_part)
-    X_nn_train = X_nn_train.reshape((X_nn_train.shape[0], size, size, 4))
-    X_nn_test = X_nn_test.reshape((X_nn_test.shape[0], size, size, 4))
+    X_nn_train = X_nn_train.reshape((X_nn_train.shape[0], size, size, len(mode)))
+    X_nn_test = X_nn_test.reshape((X_nn_test.shape[0], size, size, len(mode)))
     y_nn_train = to_categorical(y_nn_train)
     y_nn_test = to_categorical(y_nn_test)
     return X_nn_train, X_nn_test, y_nn_train, y_nn_test
 
 
-def get_data_nearest(size: int, test_part=0.15):
-    return prepare_data(size, Image.NEAREST, test_part)
+def get_data_nearest(size: int, **kwargs):
+    return prepare_data(size, Image.NEAREST, **kwargs)
 
 
-def get_data_bilinear(size: int, test_part=0.15):
-    return prepare_data(size, Image.BILINEAR, test_part)
+def get_data_bilinear(size: int, **kwargs):
+    return prepare_data(size, Image.BILINEAR, **kwargs)
 
 
-def get_data_bicubic(size: int, test_part=0.15):
-    return prepare_data(size, Image.BICUBIC, test_part)
+def get_data_bicubic(size: int, **kwargs):
+    return prepare_data(size, Image.BICUBIC, **kwargs)
 
 
-def get_data_lanczos(size: int, test_part=0.15):
-    return prepare_data(size, Image.LANCZOS, test_part)
+def get_data_lanczos(size: int, **kwargs):
+    return prepare_data(size, Image.LANCZOS, **kwargs)
 
 
 def inverse_label(labels):

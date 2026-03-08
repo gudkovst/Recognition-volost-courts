@@ -64,14 +64,14 @@ def repaint(image_ref, direction, coef=0.8, threshold=25, merge_threshold=25, pa
     for num_line in range(image_ref.shape[direction]):
         line = get_column(image_ref, num_line) if direction else image_ref[num_line]
         count_white = sum(line) / WHITE_VALUE
+        if verbose:
+            title = 'col: ' if direction else 'str: '
+            print(title, num_line, count_white)
         if count_white > image_ref.shape[1 - direction] * coef:
             counter += 1
             if white_end != num_line - 1:
                 white_begin = num_line
             white_end = num_line
-            if verbose:
-                title = 'col: ' if direction else 'str: '
-                print(title, num_line, count_white)
             if paint:
                 __paint__()
         else:
@@ -130,6 +130,6 @@ def get_binary_image(image_path, threshold=127):
     img = cv.imread(image_path)
     img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     img = cv.threshold(img, threshold, WHITE_VALUE, cv.THRESH_BINARY)
-    img_tr = img[1]
+    img_tr = np.array(img[1], dtype=np.int32)
     fill_fields(img_tr)
     return img_tr
